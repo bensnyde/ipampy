@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
+# encoding: utf8
 from __future__ import unicode_literals
 from django.db import models, migrations
-
+from django.contrib.auth.models import User, Group, Permission
 
 def create_default_user(apps, schema_editor):
-    Group = apps.get_model(app_label='auth', model_name='Group')
-    User = apps.get_model(app_label='auth', model_name='User')
+#    Group = apps.get_model(app_label='auth', model_name='Group')
+#    User = apps.get_model(app_label='auth', model_name='User')
+#    Permission = apps.get_model(app_label='auth', model_name='Permission')
 
     # Create Default Group
     group = Group.objects.create(name="Administrators")
@@ -23,7 +24,9 @@ def create_default_user(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('administration', '0001_initial'),
+        ('auth', '__first__'),
+        ('contenttypes', '__first__'),
+	('authtoken', '__first__'),
     ]
 
     operations = [

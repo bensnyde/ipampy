@@ -17,6 +17,8 @@ USE_L10N = True
 USE_TZ = True
 WSGI_APPLICATION = 'wsgi.application'
 
+MIGRATION_MODULES = {'apps.administration': 'administration'}
+
 STATIC_ROOT = 'static/'
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = ("templates/assets",)
