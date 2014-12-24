@@ -25,13 +25,13 @@ _IP Management based on Python's Django Web Framework_
 
 #### Configuration
 
-1. Rename ipampy/settings/settings_database.py-sample to ipampy/settings/settings_database.py
+1. Rename settings_database.py-sample to settings_database.py
 
     ```
     # cp ipampy/settings/settings_database.py-sample ipampy/settings/settings_database.py
     ```
 
-2. Rename ipampy/settings/settings_secret_key.py-sample to ipampy/settings/settings_secret_key.py
+2. Rename settings_secret_key.py-sample to settings_secret_key.py
 
 	```
 	# cp ipampy/settings/settings_secret_key.py-sample ipampy/settings/settings_secret_key.py
@@ -46,8 +46,16 @@ _IP Management based on Python's Django Web Framework_
 #### Usage
 
 1. Configure webserver
-	* https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/
-	* ```# python ipampy/manage.py runserver```
+	* Production
+
+	    _https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/_
+
+	* Development
+
+		```
+		# python ipampy/manage.py runserver
+		```
+
 2. Open site in browser
 	* Default Username: admin
 	* Default Password: ipampy
