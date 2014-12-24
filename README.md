@@ -1,11 +1,12 @@
 ipampy
 ======
 
-    IP Management based on Python's Django Web Framework
+_IP Management based on Python's Django Web Framework_
 
-IPAMPY uses a complete RESTful API. Further documentation at API_DOCS.MD
+IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD
 
 #### Installation
+
     1. Change Directory to Webspace
         ```# cd /path/to/webspace```
     2. Clone repository
@@ -14,6 +15,7 @@ IPAMPY uses a complete RESTful API. Further documentation at API_DOCS.MD
         ````# pip install -r ipampy/requirements.txt
 
 #### Configuration
+
     1. Rename ipampy/settings/settings_database.py-sample to ipampy/settings/settings_database.py
         ```# cp ipampy/settings/settings_database.py-sample ipampy/settings/settings_database.py```
     2. Rename ipampy/settings/settings_secret_key.py-sample to ipampy/settings/settings_secret_key.py
@@ -22,6 +24,7 @@ IPAMPY uses a complete RESTful API. Further documentation at API_DOCS.MD
         ```# python ipampy/manage.py migrate```
 
 #### Usage
+
 	1. Configure webserver
 		- https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/
 		- ```# python ipampy/manage.py runserver```
