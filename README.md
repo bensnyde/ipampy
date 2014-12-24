@@ -7,15 +7,21 @@ _IP Management based on Python's Django Web Framework_
 
     1. Change Directory to Webspace
 
-        ```# cd /path/to/webspace```
+        ```
+        # cd /path/to/webspace
+        ```
 
     2. Clone repository
 
-        ```# git clone https://github.com/bensnyde/ipampy.git```
+        ```
+        # git clone https://github.com/bensnyde/ipampy.git```
+        ```
 
     3. Install dependencies
 
-        ````# pip install -r ipampy/requirements.txt
+        ```
+        # pip install -r ipampy/requirements.txt
+        ```
 
 #### Configuration
 
@@ -35,4 +41,4 @@ _IP Management based on Python's Django Web Framework_
 		- Default Username: admin
 		- Default Password: ipampy
 
-*IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD*
+**IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD**
