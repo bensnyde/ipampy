@@ -3,15 +3,18 @@ ipampy
 
 _IP Management based on Python's Django Web Framework_
 
-IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD
-
 #### Installation
 
     1. Change Directory to Webspace
+
         ```# cd /path/to/webspace```
+
     2. Clone repository
+
         ```# git clone https://github.com/bensnyde/ipampy.git```
+
     3. Install dependencies
+
         ````# pip install -r ipampy/requirements.txt
 
 #### Configuration
@@ -31,3 +34,5 @@ IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD
 	2. Open site in browser
 		- Default Username: admin
 		- Default Password: ipampy
+
+*IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD*
