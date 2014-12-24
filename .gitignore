@@ -1,0 +1,3 @@
+*.pyc
+ipampy/settings/settings_database.py
+ipampy/settings/settings_secret_key.py
