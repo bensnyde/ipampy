@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load common_tags %}
+
+{% block sitetitle %}| Vlans{% endblock %}
+{% block heading %}Vlans{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Vlans</li>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static '/assets/plugins/data-tables/DT_bootstrap.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/vlans/vlans.js' %}"></script>
+    </script>
+{% endblock %}
+
+{% block jquery_document_ready %}
+    getVlans();
+
+    $(document)
+        .on('click', 'a.show-set-vlan-modal', function (e) {
+            e.preventDefault();
+            resetForm("set-vlan");
+            console.log('a');
+        })
+        .on('click', 'a.delete-vlan-form-submit', function (e) {
+            e.preventDefault();
+            deleteVlan();
+        })
+        .on('click', 'a.set-vlan-form-submit', function (e) {
+            e.preventDefault();
+            setVlan();
+        })
+        .on('click', 'a.refresh-vlans', function (e) {
+            e.preventDefault();
+            getVlans();
+        })
+        .on('click', 'a.del-vlan', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("del-vlan");
+                $("#del-vlan-form #vlan_id").val($(this).closest('tr').data('id'))
+            }
+        })
+        .on('click', 'a.edit-vlan', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("set-vlan");
+                getVlan($(this).closest('tr').data('id'));
+            }
+        });
+{% endblock %}
+
+{% block page_header %}
+   <!-- BEGIN VLAN HEADER -->
+    <div class="row" id="content-header">
+        <div class="col-md-6"><h3>VLANs</h3></div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <a href="#" role="button" class="refresh-vlans" alt="Refresh VLANs"><i class="fa fa-refresh"></i></a>
+                <a href="#" role="button" class="show-set-vlan-modal" alt="Create VLAN"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- END VLAN HEADER -->
+{% endblock %}
+
+{% block content %}
+ <!-- BEGIN VLAN CONTENT -->
+
+    <!-- BEGIN VLAN TABLE -->
+    <table id="vlans-table" class="table table-hover">
+        <thead class="row">
+            <tr>
+                <th class="col-md-2">Number</th>
+                <th class="col-md-4">Name</th>
+                <th class="col-md-4">Description</th>
+                <th class="col-md-2">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody id="vlans-table-tbody"></tbody>
+    </table>
+    <!-- END VLAN TABLE -->
+
+    <!-- BEGIN DELETE VLAN MODAL -->
+    <div id="del-vlan-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete VLAN</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>Are you sure you want to delete the selected VLAN?</span>
+                    <!-- BEGIN DELETE VLAN FORM -->
+                    <form id="del-vlan-form" role="form" class="form">
+                        <input type="hidden" name="vlan_id" id="vlan_id" value="0" />
+                    </form>
+                    <!-- END DELETE VLAN FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary delete-vlan-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE VLAN MODAL -->
+
+    <!-- BEGIN SET VLAN MODAL -->
+    <div id="set-vlan-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set VLAN</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN SET VLAN FORM -->
+                    <form id="set-vlan-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="vlan_id" id="vlan_id" value="0" />
+                        <!-- BEGIN SET VLAN FORM TABLE -->
+                        <table class="table table-hover" id="set-vlan-form-table">
+                            {% for field in vlanform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET VLAN FORM TABLE -->
+                    </form>
+                    <!-- END SET VLAN FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-vlan-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET VLAN MODAL -->
+
+ <!-- END VLAN CONTENT -->
+{% endblock %}

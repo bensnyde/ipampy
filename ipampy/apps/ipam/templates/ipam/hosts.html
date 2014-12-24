@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load common_tags %}
+
+{% block sitetitle %}| Network Details{% endblock %}
+{% block heading %}Network Details{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'networks:index' %}" alt="Networks Index">Networks</a></li>
+    <li>{{ network }}</li>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static '/assets/plugins/data-tables/DT_bootstrap.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/hosts/hosts.js' %}"></script>
+{% endblock %}
+
+{% block jquery_document_ready %}
+    NID = {{ network_id }};
+    networks_index_uri = "{% url 'networks:index' %}";
+
+    getHosts();
+    getNetwork();
+    getNetworkSummary();
+
+    $("#set-network-form #id_address").addClass("uneditable-input");
+    $("#set-network-form #id_cidr").addClass("uneditable-input");
+
+    $(document)
+        .on('click', 'a.select-network-action', function (e) {
+            e.preventDefault();
+            switch($("#network-action-select").val()) {
+                case 'Resize':
+                    resetForm("reset-network");
+                    break;
+                case 'Split':
+                    resetForm("split-network");
+                    getSplitOptions();
+                    break;
+                case 'Truncate':
+                    resetForm("truncate-network");
+            }
+        })
+        .on('click', 'a.refresh-network', function (e) {
+            e.preventDefault();
+            getNetwork();
+        })
+        .on('click', 'a.refresh-hosts', function (e) {
+            e.preventDefault();
+            getHosts();
+        })
+        .on('click', 'a.show-del-network-modal', function (e) {
+            e.preventDefault();
+            resetForm("del-network");
+        })
+        .on('click', 'a.show-set-network-modal', function (e) {
+            e.preventDefault();
+            $("#set-network-modal").modal("show");
+        })
+        .on('click', 'a.truncate-network-form-submit', function (e) {
+            e.preventDefault();
+            truncateNetwork();
+        })
+        .on('click', 'a.resize-network-form-submit', function (e) {
+            e.preventDefault();
+            resizeNetwork();
+        })
+        .on('click', 'a.split-network-form-submit', function (e) {
+            e.preventDefault();
+            splitNetwork();
+        })
+        .on('click', 'a.del-network-form-submit', function (e) {
+            e.preventDefault();
+            deleteNetwork();
+        })
+        .on('click', 'a.del-host-form-submit', function (e) {
+            e.preventDefault();
+            deleteHost();
+        })
+        .on('click', 'a.set-network-form-submit', function (e) {
+            e.preventDefault();
+            setNetwork();
+        })
+        .on('click', 'a.set-host-form-submit', function (e) {
+            e.preventDefault();
+            setHost();
+        })
+        .on('click', 'a.show-set-host-modal', function (e) {
+            e.preventDefault();
+            resetForm("set-host");
+            $("#set-host-form #id_network").val(""+NID+"");
+        })
+        .on('click', 'a.show-del-host-modal', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("del-host");
+                $("#del-host-form #host_id").val($(this).closest('tr').data('id'));
+            }
+        })
+        .on('click', 'a.edit-host', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("set-host");
+                getHost($(this).closest('tr').data('id'));
+            }
+        });
+{% endblock %}
+
+{% block page_header %}
+    <!-- BEGIN HOSTS HEADER -->
+    <div class="row" id="content-header">
+        <div class="col-md-12"><h3>{{ network }}</h3></div>
+    </div>
+    <!-- END HOSTS HEADER -->
+{% endblock %}
+
+{% block content %}
+ <!-- BEGIN HOSTS CONTENT -->
+
+    <div class="row">
+        <!-- BEGIN LEFT COLUMN -->
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Properties</h4>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="#" class="refresh-network"><icon class="fa fa-refresh"></icon></a>
+                    <a href="#" class="show-set-network-modal"><icon class="fa fa-edit green"></icon></a>
+                    <a href="#" class="show-del-network-modal"><icon class="fa fa-trash-o red"></icon></a>
+                </div>
+            </div>
+
+            <!-- BEGIN NETWORK STATS TABLE -->
+            <table class="table table-hover" id="network-stats-table"></table>
+            <!-- END NETWORK STATS TABLE -->
+        </div>
+        <!-- END LEFT COLUMN -->
+        <!-- BEGIN RIGHT COLUMN -->
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6"><h4>Hosts</h4></div>
+                <div class="col-md-6 text-right">
+                    <div class="btn-group">
+                        <a href="#" role="button" class="refresh-hosts" alt="Refresh Hosts"><i class="fa fa-refresh"></i></a>
+                        <a href="#" role="button" class="show-set-host-modal" alt="Create Host"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <!-- BEGIN HOSTS TABLE -->
+            <table class="table table-hover" id="hosts-table">
+                <thead class="row">
+                    <tr>
+                        <th class="col-md-2">Host</th>
+                        <th class="col-md-2">Network</th>
+                        <th class="col-md-2">Type</th>
+                        <th class="col-md-2">MAC Address</th>
+                        <th class="col-md-3">Description</th>
+                        <th class="col-md-1">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="hosts-table-tbody"></tbody>
+            </table>
+            <!-- END HOSTS TABLE -->
+
+            <div class="row">
+                <div class="col-md-12"><h4>Description</h4></div>
+            </div>
+
+            <!-- BEGIN NETWORK DESCRIPTION TABLE -->
+            <table class="table table-hover" id="network-description-table"></table>
+            <!-- END NETWORK DESCRIPTION TABLE -->
+
+        </div>
+        <!-- END LEFT COLUMN -->
+    </div>
+
+    <!-- BEGIN SET HOST MODAL -->
+    <div id="set-host-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set Host</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN SET HOST FORM -->
+                    <form role="form" class="form form-vertical" id="set-host-form">
+                        <input type="hidden" name="id" id="host_id" value="0" />
+                        <!-- BEGIN SET HOST FORM TABLE -->
+                        <table class="table table-hover" id="set-host-form-table">
+                            {% for field in hostform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET HOST FORM TABLE -->
+                    </form>
+                    <!-- END SET HOST FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-host-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET HOSTMODAL -->
+
+    <!-- BEGIN SET NETWORK MODAL -->
+    <div id="set-network-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set Network</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!--BEGIN SET NETWORK FORM -->
+                    <form id="set-network-form" clas="form form-vertical" role="form">
+                        <input type="hidden" name="id" id="network_id" value=NID />
+                        <!-- BEGIN SET NETWORK FORM TABLE -->
+                        <table class="table table-hover" id="set-network-form-table">
+                            {% for field in networkaddressform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END TABLE -->
+                    </form>
+                    <!--END SET NETWORK FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-network-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET NETWORK MODAL -->
+
+    <!-- BEGIN DELETE HOST MODAL -->
+    <div id="del-host-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete Host</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>Permanently delete Host record?</span>
+                    <!--BEGIN DELETE HOST FORM -->
+                    <form role="form" id="del-host-form" class="form">
+                        <input type="hidden" name="host_id" id="host_id" value="0" />
+                    </form>
+                    <!--END DELETE HOST FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary del-host-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE HOST MODAL -->
+
+    <!-- BEGIN DELETE NETWORK MODAL -->
+    <div id="del-network-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete Network</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>All associated hosts and child networks will also be deleted.</span>
+                    <!--BEGIN DELETE NETWORK FORM -->
+                    <form role="form" id="del-network-form" class="form">
+                        <input type="hidden" name="network_id" id="network_id" value=NID />
+                    </form>
+                    <!--END DELETE NETWORK FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary del-network-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE NETWORK MODAL -->
+
+    <!-- BEGIN TRUNCATE NETWORK MODAL -->
+    <div id="truncate-network-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Truncate Network</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span style="text-indent: 10px">Truncating will purge all Host records from the specified Network.</span>
+                    <!-- BEGIN TRUNCATE NETWORK FORM -->
+                    <form id="truncate-network-form" class="form" role="form">
+                        <input type="hidden" name="network_id" id="network_id" value=NID />
+                    </form>
+                    <!-- END TRUNCATE NETWORK FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary truncate-network-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END TRUNCATE NETWORK MODAL -->
+
+    <!-- BEGIN RESIZE NETWORK MODAL -->
+    <div id="resize-network-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Resize Network</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <div style="text-indent: 10px">
+                        Resizing a network allows you to increase or decrease the Network's CIDR.
+                        <div style="margin: 0 20px 20px 0">
+                            <ul>
+                                <li>The new Network must be a valid network.</li>
+                                <li>Any associated Host objects must fall under the new subnet.</li>
+                            </ul>
+                        </div>
+                    </div><br />
+                    <!-- BEGIN RESIZE NETWORK FORM -->
+                    <form id="resize-network-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="network_id" id="network_id" value=NID />
+                        <!-- BEGIN RESIZE NETWORK FORM TABLE -->
+                        <table class="table table-hover" id="resize-network-form-table">
+                            {% for field in resizenetworkform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END RESIZE NETWORK FORM TABLE -->
+                    </form>
+                    <!-- END RESIZE NETWORK FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary resize-network-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END RESIZE NETWORK MODAL -->
+
+    <!-- BEGIN SPLIT NETWORK MODAL -->
+    <div id="split-network-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Split Network</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span style="text-indent: 10px">Splitting a network will create multiple subnets.</span><br /><br />
+                    <!--BEGIN SPLIT NETWORK FORM -->
+                    <form id="split-network-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="network_id" id="network_id" value=NID />
+                        <!-- BEGIN SPLIT NETWORK FORM TABLE -->
+                        <table class="table table-hover" id="split-network-form-table">
+                            {% for field in splitnetworkform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SPLIT NETWORK FORM TABLE -->
+                    </form>
+                    <!--END SPLIT NETWORK FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary split-network-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SPLIT NETWORK MODAL -->
+
+ <!-- END HOSTS CONTENT -->
+{% endblock %}

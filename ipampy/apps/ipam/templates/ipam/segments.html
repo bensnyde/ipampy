@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load common_tags %}
+
+{% block sitetitle %}| Segments{% endblock %}
+{% block heading %}Segments{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Segments</li>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static '/assets/plugins/data-tables/DT_bootstrap.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/segments/segments.js' %}"></script>
+{% endblock %}
+
+{% block jquery_document_ready %}
+    getSegments();
+
+    $(document)
+        .on('click', 'a.show-set-segment-modal', function (e) {
+            e.preventDefault();
+            resetForm("set-segment");
+        })
+        .on('click', 'a.del-segment-form-submit', function (e) {
+            e.preventDefault();
+            deleteSegment();
+        })
+        .on('click', 'a.set-segment-form-submit', function (e) {
+            e.preventDefault();
+            setSegment();
+        })
+        .on('click', 'a.refresh-segments', function (e) {
+            e.preventDefault();
+            getSegments();
+        })
+        .on('click', 'a.del-segment', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("del-segment");
+                $("#del-segment-form #segment_id").val($(this).closest('tr').data('id'))
+            }
+        })
+        .on('click', 'a.edit-segment', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("set-segment");
+                getSegment($(this).closest('tr').data('id'));
+            }
+        });
+{% endblock %}
+
+{% block page_header %}
+   <!-- BEGIN SEGMENT HEADER -->
+    <div class="row" id="content-header">
+        <div class="col-md-6"><h3>Segments</h3></div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <a href="#" role="button" class="refresh-segments" alt="Refresh SEGMENTs"><i class="fa fa-refresh"></i></a>
+                <a href="#" role="button" class="show-set-segment-modal" alt="Create SEGMENT"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- END SEGMENT HEADER -->
+{% endblock %}
+
+{% block content %}
+ <!-- BEGIN SEGMENT CONTENT -->
+
+    <!-- BEGIN SEGMENT TABLE -->
+    <table id="segments-table" class="table table-hover">
+        <thead class="row">
+            <tr>
+                <th class="col-md-3">Name</th>
+                <th class="col-md-4">Description</th>
+                <th class="col-md-3">Parent</th>
+                <th class="col-md-2">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody id="segments-table-tbody"></tbody>
+    </table>
+    <!-- END SEGMENT TABLE -->
+
+    <!-- BEGIN DELETE SEGMENT MODAL -->
+    <div id="del-segment-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete Segment</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>Are you sure you want to delete the selected Segment?</span>
+                    <!-- BEGIN DELETE SEGMENT FORM -->
+                    <form id="del-segment-form" role="form" class="form">
+                        <input type="hidden" name="segment_id" id="segment_id" value="0" />
+                    </form>
+                    <!-- END DELETE SEGMENT FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary del-segment-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE SEGMENT MODAL -->
+
+    <!-- BEGIN SET SEGMENT MODAL -->
+    <div id="set-segment-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set Segment</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN SET SEGMENT FORM -->
+                    <form id="set-segment-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="segment_id" id="segment_id" value="0" />
+                        <!-- BEGIN SET SEGMENT FORM TABLE -->
+                        <table class="table table-hover" id="set-vrf-form-table">
+                            {% for field in segmentform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET SEGMENT FORM TABLE -->
+                    </form>
+                    <!-- END SET SEGMENT FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-segment-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET SEGMENT MODAL -->
+
+ <!-- END SEGMENT CONTENT -->
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load common_tags %}
+
+{% block sitetitle %}| Networks{% endblock %}
+{% block heading %}Networks{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Networks</li>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static '/assets/plugins/data-tables/DT_bootstrap.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/networks/networks.js' %}"></script>
+{% endblock %}
+
+{% block jquery_document_ready %}
+    getNetworks();
+
+    $(document)
+        .on('click', 'a.refresh-networks', function (e) {
+            e.preventDefault();
+            getNetworks();
+        })
+        .on('click', 'a.show-set-network-modal', function (e) {
+            e.preventDefault();
+            resetSetNetworkForm();
+        })
+        .on('click', 'a.set-network-form-submit', function (e) {
+            e.preventDefault();
+            setNetwork();
+        });
+
+    $('#networks-list-table')
+        .on('click', 'tr', function (e) {
+            e.preventDefault();
+            if($(this).data('id') && parseInt($(this).data('id'), 10)) {
+                window.location = "/hosts/"+$(this).data('id')+"/";
+            }
+        });
+
+{% endblock %}
+
+{% block page_header %}
+    <!-- BEGIN NETWORKS HEADER -->
+    <div class="row" id="content-header">
+        <div class="col-md-6"><h3>Networks</h3></div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <a href="#" role="button" class="refresh-networks" alt="Refresh Networks"><i class="fa fa-refresh"></i></a>
+                <a href="#" role="button" class="show-set-network-modal" alt="Create Network"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- END NETWORKS HEADER -->
+{% endblock %}
+
+{% block content %}
+ <!-- BEGIN NETWORKS CONTENT -->
+
+    <!-- BEGIN NETWORKS TABLE -->
+    <table class="table table-hover" id="networks-list-table">
+        <thead class="row">
+            <tr>
+                <th class="col-md-2">Network</th>
+                <th class="col-md-1">CIDR</th>
+                <th class="col-md-1">Segment</th>
+                <th class="col-md-1">Parent</th>
+                <th class="col-md-1">Vlan</th>
+                <th class="col-md-1">Vrf</th>
+                <th class="col-md-2">Owner</th>
+                <th class="col-md-3">Description</th>
+            </tr>
+        </thead>
+        <tbody id="networks-list-tbody"></tbody>
+    </table>
+    <!-- END NETWORKS TABLE -->
+
+    <!-- BEGIN SET NETWORK MODAL -->
+    <div id="set-network-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set Network</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!--BEGIN SET NETWORK FORM -->
+                    <form id="set-network-form" clas="form form-vertical" role="form">
+                        <input type="hidden" name="id" id="network_id" value="0" />
+                        <!-- BEGIN SET NETWORK FORM TABLE -->
+                        <table class="table table-hover" id="set-network-form-table">
+                            {% for field in networkaddressform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET NETWORK FORM TABLE -->
+                    </form>
+                    <!--END SET NETWORK FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-network-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET NETWORK MODAL -->
+
+ <!-- END NETWORKS CONTENT -->
+{% endblock %}

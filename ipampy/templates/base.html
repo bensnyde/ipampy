@@ -1,0 +1,232 @@
+{% load staticfiles %}
+
+ <!DOCTYPE html>
+ <html lang="en">
+
+  <head>
+     <title>IPAMpy {% block sitetitle %}{% endblock %}</title>
+     <meta charset="utf-8" />
+     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+     <meta content="IP Management" name="description" />
+     <meta content="Benton Snyder" name="author" />
+
+     <link rel="shortcut icon" href="{% static '/assets/favicon.ico' %}" />
+     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+     <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/cosmo/bootstrap.min.css" rel="stylesheet">
+
+     {% block css %}{% endblock %}
+
+     <style type="text/css">
+      body {
+        font-family: "Source Sans Pro",sans-serif;
+        font-size: 14px;
+        line-height: 1.52857143;
+        color: #656565;
+        padding-top: 70px;
+        padding-bottom: 70px;
+      }
+
+      hr {
+        margin: 0 0 10px 0;
+	      padding: 0;
+	      color: #dddddd;
+      }
+
+      h3 {
+        margin: 0;
+        padding: 0;
+        display: inline;
+      }
+
+      h4 {
+        margin: 0;
+        padding: 0;
+        display: inline;
+      }
+
+      .green {
+        color: green;
+      }
+
+      .red {
+        color: red;
+      }
+
+      #content-header {
+        margin: 0 4px 10px 4px;
+      }
+
+      .breadcrumb>li+li:before {
+        content: ">\00a0";
+        padding: 0 5px;
+        color: #c1c2c3;
+      }
+
+      #back-up-top {
+        background-color: lightgray;
+        color: #222;
+        float: right;
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 6px;
+        font-size: 16px;
+        padding: 0 6px 0 6px
+      }
+
+      .alert {
+        border-radius: 4px;
+        border: 1px solid transparent;
+      }
+
+      .navbar-header a { font-size: 24px; color: #ffffff; }
+      .navbar-fixed-bottom { background-color: #f5f5f5 }
+     </style>
+
+     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+     <script type="text/javascript">
+        jQuery(document).ready(function() {
+          {% block jquery_document_ready %}{% endblock %}
+        });
+
+        // Django CSRF protection
+        function sameOrigin(url) {
+          // test that a given url is a same-origin URL
+          // url could be relative or scheme relative or absolute
+          var host = document.location.host; // host + port
+          var protocol = document.location.protocol;
+          var sr_origin = '//' + host;
+          var origin = protocol + sr_origin;
+          // Allow absolute or scheme relative URLs to same origin
+          return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+        }
+
+        // Django CSRF protection
+        function csrfSafeMethod(method) {
+          // these HTTP methods do not require CSRF protection
+          return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        // Django CSRF protection
+        function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+
+        // Django CSRF protection
+        var csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+          beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+              // Send the token to same-origin, relative URLs only.
+              // Send the token only if the method warrants CSRF protection
+              // Using the CSRFToken value acquired earlier
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+          }
+        });
+
+        function scrollToAnchor(anchor){
+            var aTag = $("a[name='"+ anchor +"']");
+            $('html,body').animate({scrollTop: aTag.offset().top},'slow');
+        }
+     </script>
+
+    {% block js %}{% endblock %}
+  </head>
+
+  <body>
+    <!-- BEGIN HEADER -->
+      <!-- BEGIN TOP NAVIGATION BAR -->
+      <a name="top"></a>
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <!-- BEGIN LOGO -->
+              <a href="http://github.com/bensnyde/ipampy" alt="Home">IPAMpy</a>
+            <!-- END LOGO -->
+          </div>
+          <div class="collapse navbar-collapse">
+            <!-- BEGIN LEFT NAVBAR -->
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="{% url 'ipampy:segments' %}" alt="Segments">Segments</a></li>
+              <li><a href="{% url 'ipampy:networks' %}" alt="Networks">Networks</a></li>
+              <li><a href="{% url 'ipampy:vrfs' %}" alt="Vrfs">Vrfs</a></li>
+              <li><a href="{% url 'ipampy:vlans' %}" alt="Vlans">Vlans</a></li>
+              <li><a href="{% url 'settings:index' %}" alt="Settings">Settings</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span>{{ user.username }}&nbsp;</span><i class="fa fa-angle-down"></i></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'logout' %}" alt="Logout">Log Out</a></li>
+                </ul>
+              </li>
+            </ul>
+            <!-- END LEFT NAVBAR -->
+
+          </div>
+        </div>
+      </div>
+      <!-- END TOP NAVIGATION BAR -->
+    <!-- END HEADER -->
+
+
+    <!-- BEGIN BODY CONTAINER -->
+    <div class="container">
+      <!-- BEGIN HEADER -->
+      <div class="row">
+        <div class="col-md-12">
+          {% block page_header %}{% endblock %}
+          <ul class="page-breadcrumb breadcrumb" id="breadcrumbs">
+            <li><a href="{% url "ipampy:networks" %}" alt="Home">Home</a></li>
+            {% block breadcrumbs %}{% endblock %}
+          </ul>
+        </div>
+      </div>
+      <!-- END HEADER -->
+
+      <!-- BEGIN BODY CONTENT -->
+      <div class="row">
+        <div class="col-md-12">
+          <!-- BEGIN PAGE CONTENT -->
+          {% block content %}{% endblock %}
+          <!-- END PAGE CONTENT -->
+        </div>
+      </div>
+      <!-- END BODY CONTENT -->
+    </div>
+    <!-- END BODY CONTAINER -->
+
+    <!-- BEGIN FOOTER -->
+     <div class="navbar navbar-fixed-bottom">
+      <div class="container">
+        <div class="col-md-8">
+          &copy; 2014 <a href="http://github.com/bensnyde/ipampy" target="_blank" alt="IPAMpy">IPAMpy</a> All rights reserved.
+        </div>
+        <div class="col-md-4 text-right">
+          <a href="#" onclick="scrollToAnchor('top')"><span id="back-up-top"><i class="fa fa-angle-up"></i></span></a>
+        </div>
+      </div>
+     </div>
+    <!-- END FOOTER -->
+
+    <!-- BEGIN JAVASCRIPTS -->
+     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <!-- END JAVASCRIPTS -->
+  </body>
+
+ </html>

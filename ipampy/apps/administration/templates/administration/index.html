@@ -1,0 +1,630 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load common_tags %}
+
+{% block sitetitle %}| Administration{% endblock %}
+{% block heading %}Administration{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Administration</li>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static '/assets/plugins/data-tables/DT_bootstrap.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript">
+        // Fetch Users Index
+        function getUsers() {
+            $("#users-table").dataTable().fnDestroy();
+            $("#users-table-tbody").html("");
+
+            $.ajax({
+                url: "/api/users/?format=json",
+                type: "GET",
+            })
+            .done(function(result) {
+                for(x in result) {
+                    $("#users-table-tbody").append(' \
+                        <tr data-id="'+result[x].id+'"> \
+                            <td>'+result[x].username+'</td> \
+                            <td>'+result[x].first_name+'</td> \
+                            <td>'+result[x].last_name+'</td> \
+                            <td>'+result[x].email+'</td> \
+                            <td>'+result[x].groups+'</td> \
+                            <td>'+result[x].last_login+'</td> \
+                            <td class="text-right"> \
+                                <a href="#" class="edit-user" alt="Edit User"><i class="fa fa-edit green"></i></a> \
+                                <a href="#" class="del-user" alt="Delete User"><i class="fa fa-trash-o red"></i></a> \
+                            </td> \
+                        </tr>'
+                    );
+                }
+
+                $("#users-table").dataTable({"aoColumnDefs": [{'bSortable': false, 'aTargets': [6]},{'bSearchable': false, 'aTargets': [6]}], "aaSorting": [[0, 'asc']]});
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to getUsers(): " + textStatus);
+                $("#users-table-tbody").append('<tr class="has-error"><td colspan=2><em>There was an error fetching the users index.</em></td></tr>');
+            });
+        }
+
+        // Fetch User Detail
+        function getUser(user_id) {
+            if(user_id !== parseInt(user_id, 10)) {
+                console.log("Invalid User ID passed to getUser().");
+                return False;
+            }
+
+            $.ajax({
+                url: "/api/users/"+user_id+"/?format=json",
+                type: "GET",
+            })
+            .done(function(result) {
+                $("#set-user-form #user_id").val(user_id);
+                $.each(result, function(x, y) {
+                    $("#set-user-form #id_"+x).val(y);
+                });
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to getUser(" + user_id + "): " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">There was an error fetching the User details.</div>');
+            });
+        }
+
+        // Delete User
+        function deleteUser() {
+            var user_id = $("#del-user-form #user_id").val();
+
+            $.ajax({
+                url: "/api/users/"+user_id+"/?format=json",
+                type: "DELETE",
+            })
+            .done(function(result) {
+                console.log("User " + user_id + " deleted successfuly.");
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-success">User deleted successfully.</div>');
+                getUsers();
+                setTimeout("$('.modal.in').modal('hide')",500);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to delete user:" + user_id + " " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">Failed to delete user.</div>');
+            });
+
+            $('.modal-alert').fadeOut();
+        }
+
+        // Create or Update User
+        function setUser() {
+            var user_id = $("#set-user-form #user_id").val();
+            var http_verb = "POST";
+            var http_url = "/api/users/";
+
+            if(user_id > 0) {
+                http_verb = "PUT";
+                http_url += user_id + "/";
+            }
+
+            $.ajax({
+                url: http_url,
+                type: http_verb,
+                data: $("#set-user-form").serialize(),
+            })
+            .done(function(result) {
+                console.log("User " + user_id + " updated successfuly.");
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-success">User updated successfully.</div>');
+                getUsers();
+                setTimeout("$('.modal.in').modal('hide')",500);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to update user:" + user_id + " " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">Failed to update user.</div>');
+
+                $.each(jqXHR["responseJSON"], function(key, value) {
+                    $("#set-user-form #id_"+key).closest('tr').addClass("has-error");
+                    $("#set-user-form #"+key+"-help").html(value);
+                });
+            });
+        }
+
+        function createUser() {
+            $.ajax({
+                url: "/api/users/?format=json",
+                type: "POST",
+                data: $("#create-user-form").serialize(),
+            })
+            .done(function(result) {
+                console.log("User created successfuly.");
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-success">User created successfully.</div>');
+                getUsers();
+                setTimeout("$('.modal.in').modal('hide')",500);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to create user: " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">Failed to create user.</div>');
+
+                $.each(jqXHR["responseJSON"], function(key, value) {
+                    $("#create-user-form #id_"+key).closest('tr').addClass("has-error");
+                    $("#create-user-form #"+key+"-help").html(value);
+                });
+            });
+        }
+
+
+        // Fetch Groups Index
+        function getGroups() {
+            $("#groups-table").dataTable().fnDestroy();
+            $("#groups-table-tbody").html("");
+
+            $.ajax({
+                url: "/api/groups/?format=json",
+                type: "GET",
+            })
+            .done(function(result) {
+                for(x in result) {
+                    $("#groups-table-tbody").append(' \
+                        <tr data-id="'+result[x].id+'"> \
+                            <td>'+result[x].name+'</td> \
+                            <td class="text-right"> \
+                                <a href="#" class="edit-group" alt="Edit Group"><i class="fa fa-edit green"></i></a> \
+                                <a href="#" class="del-group" alt="Delete Group"><i class="fa fa-trash-o red"></i></a> \
+                            </td> \
+                        </tr>'
+                    );
+                }
+
+                $("#groups-table").dataTable({"aoColumnDefs": [{'bSortable': false, 'aTargets': [1]},{'bSearchable': false, 'aTargets': [1]}], "aaSorting": [[0, 'asc']]});
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to getGroups(): " + textStatus);
+                $("#groups-table-tbody").append('<tr class="has-error"><td colspan=2><em>There was an error fetching the groups index.</em></td></tr>');
+            });
+        }
+
+        // Fetch Group Detail
+        function getGroup(group_id) {
+            if(group_id !== parseInt(group_id, 10)) {
+                console.log("Invalid Group ID passed to getGroup().");
+                return False;
+            }
+
+            $.ajax({
+                url: "/api/groups/"+group_id+"/?format=json",
+                type: "GET",
+            })
+            .done(function(result) {
+                $("#set-group-form #group_id").val(group_id);
+                $.each(result, function(x,y) {
+                    $("#set-group-form #id_"+x).val(y);
+                });
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to getGroup(" + group_id + "): " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">There was an error fetching the Group details.</div>');
+            });
+        }
+
+        // Delete Group
+        function deleteGroup() {
+            var group_id = $("#del-group-form #group_id").val();
+
+            $.ajax({
+                url: "/api/groups/"+group_id+"/?format=json",
+                type: "DELETE",
+            })
+            .done(function(result) {
+                console.log("Group " + group_id + " deleted successfuly.");
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-success">Group deleted successfully.</div>');
+                getGroups();
+                setTimeout("$('.modal.in').modal('hide')",500);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to delete group:" + group_id + " " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">Failed to delete group.</div>');
+            });
+
+            $('.modal-alert').fadeOut();
+        }
+
+        // Create or Update Group
+        function setGroup() {
+            var group_id = $("#set-group-form #group_id").val();
+            var http_verb = "POST";
+            var http_url = "/api/groups/";
+
+            if(group_id > 0) {
+                http_verb = "PUT";
+                http_url += group_id + "/";
+            }
+
+            $.ajax({
+                url: http_url,
+                type: http_verb,
+                data: $("#set-group-form").serialize(),
+            })
+            .done(function(result) {
+                console.log("Group " + group_id + " updated successfuly.");
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-success">Group updated successfully.</div>');
+                getGroups();
+                setTimeout("$('.modal.in').modal('hide')",500);
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.log("Failed to update group:" + group_id + " " + textStatus);
+                $('.modal-alert').fadeIn();
+                $('.modal-alert').html('<div class="alert alert-danger">Failed to update group.</div>');
+
+                $.each(jqXHR["responseJSON"], function(key, value) {
+                    $("#set-group-form #id_"+key).closest('tr').addClass("has-error");
+                    $("#set-group-form #"+key+"-help").html(value);
+                });
+            });
+        }
+
+        function resetForm(formname, idname) {
+            $(".modal-alert").html("");
+            $("#"+formname+"-form").trigger('reset');
+            $("#"+formname+"-form #"+idname+"_id").val("0");
+
+            $("#"+formname+"-form-table tr").each(function() {
+                $(this).removeClass('has-error');
+                $('span', this).html("");
+            });
+
+            $("#"+formname+"-modal").modal('show');
+        }
+    </script>
+{% endblock %}
+
+{% block jquery_document_ready %}
+    getGroups();
+    getUsers();
+
+    $(document)
+        .on('click', 'a.show-set-user-modal', function (e) {
+            e.preventDefault();
+            resetForm("set-user", "user");
+        })
+        .on('click', 'a.show-create-user-modal', function (e) {
+            e.preventDefault();
+            resetForm("create-user", "user");
+        })
+        .on('click', 'a.del-user-form-submit', function (e) {
+            e.preventDefault();
+            deleteUser();
+        })
+        .on('click', 'a.create-user-form-submit', function (e) {
+            e.preventDefault();
+            createUser();
+        })
+        .on('click', 'a.set-user-form-submit', function (e) {
+            e.preventDefault();
+            setUser();
+        })
+        .on('click', 'a.refresh-users', function (e) {
+            e.preventDefault();
+            getUsers();
+        })
+        .on('click', 'a.del-user', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("del-user", "user");
+                $("#del-user-form #user_id").val($(this).closest('tr').data('id'))
+            }
+        })
+        .on('click', 'a.edit-user', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("set-user", "user");
+                getUser($(this).closest('tr').data('id'));
+            }
+        })
+        .on('click', 'a.show-set-group-modal', function (e) {
+            e.preventDefault();
+            resetForm("set-group", "group");
+        })
+        .on('click', 'a.del-group-form-submit', function (e) {
+            e.preventDefault();
+            deleteGroup();
+        })
+        .on('click', 'a.set-group-form-submit', function (e) {
+            e.preventDefault();
+            setGroup();
+        })
+        .on('click', 'a.refresh-groups', function (e) {
+            e.preventDefault();
+            getGroups();
+        })
+        .on('click', 'a.del-group', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("del-group", "group");
+                $("#del-group-form #group_id").val($(this).closest('tr').data('id'))
+            }
+        })
+        .on('click', 'a.edit-group', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("set-group", "group");
+                getGroup($(this).closest('tr').data('id'));
+            }
+        });
+{% endblock %}
+
+{% block page_header %}
+   <!-- BEGIN ADMINISTRATION HEADER -->
+    <div class="row" id="content-header">
+        <div class="col-md-12"><h3>Administration</h3></div>
+    </div>
+    <!-- END ADMINISTRATION HEADER -->
+{% endblock %}
+
+{% block content %}
+ <!-- BEGIN ADMINISTRATION CONTENT -->
+
+    <!-- BEGIN GROUPS HEADER -->
+    <div class="row">
+        <div class="col-md-6"><h4>Groups</h4></div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <a href="#" role="button" class="refresh-groups" alt="Refresh Groups"><i class="fa fa-refresh"></i></a>
+                <a href="#" role="button" class="show-set-group-modal" alt="Create Group"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- END GROUPS HEADER -->
+    <hr />
+    <!-- BEGIN GROUPS TABLE -->
+    <table id="groups-table" class="table table-hover">
+        <thead class="row">
+            <tr>
+                <th class="col-md-10">Name</th>
+                <th class="col-md-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="groups-table-tbody"></tbody>
+    </table>
+    <!-- END GROUPS TABLE -->
+
+    <!-- BEGIN USERS HEADER -->
+    <div class="row">
+        <div class="col-md-6"><h4>Users</h4></div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <a href="#" role="button" class="refresh-users" alt="Refresh Users"><i class="fa fa-refresh"></i></a>
+                <a href="#" role="button" class="show-create-user-modal" alt="Create User"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- END USERS HEADER -->
+    <hr />
+    <!-- BEGIN USERS TABLE -->
+    <table class="table table-hover" id="users-table">
+        <thead class="row">
+            <tr>
+                <th class="col-md-2">Username</th>
+                <th class="col-md-2">First Name</th>
+                <th class="col-md-3">Last Name</th>
+                <th class="col-md-2">Email</th>
+                <th class="col-md-2">Groups</th>
+                <th class="col-md-2">Last Login</th>
+                <th class="col-md-1">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="users-table-tbody"></tbody>
+    </table>
+    <!-- END USERS TABLE -->
+
+
+    <!-- BEGIN DELETE GROUP MODAL -->
+    <div id="del-group-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete Group</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>Are you sure you want to delete the selected Group?</span>
+                    <!-- BEGIN DELETE GROUP FORM -->
+                    <form id="del-group-form" role="form" class="form">
+                        <input type="hidden" name="group_id" id="group_id" value="0" />
+                    </form>
+                    <!-- END DELETE GROUP FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary del-group-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE GROUP MODAL -->
+
+    <!-- BEGIN SET GROUP MODAL -->
+    <div id="set-group-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set Group</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN SET GROUP FORM -->
+                    <form id="set-group-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="group_id" id="group_id" value="0" />
+                        <!-- BEGIN SET GROUP FORM TABLE -->
+                        <table class="table table-hover" id="set-vrf-form-table">
+                            {% for field in groupform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET GROUP FORM TABLE -->
+                    </form>
+                    <!-- END SET GROUP FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-group-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET GROUP MODAL -->
+
+    <!-- BEGIN CREATE USER MODAL -->
+    <div id="create-user-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Create User</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN CREATE USER FORM -->
+                    <form id="create-user-form" class="form form-vertical" role="form">
+                        <!-- BEGIN CREATE USER FORM TABLE -->
+                        <table class="table table-hover" id="create-user-form-table">
+                            {% for field in usercreationform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END CREATE USER FORM TABLE -->
+                    </form>
+                    <!-- END CREATE USER FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary create-user-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END CREATE USER MODAL -->
+
+    <!-- BEGIN SET USER MODAL -->
+    <div id="set-user-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set User</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN SET USER FORM -->
+                    <form id="set-user-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="user_id" id="user_id" value="0" />
+                        <!-- BEGIN SET USER FORM TABLE -->
+                        <table class="table table-hover" id="set-user-form-table">
+                            {% for field in userchangeform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET USER FORM TABLE -->
+                    </form>
+                    <!-- END SET USER FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-user-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET USER MODAL -->
+
+    <!-- BEGIN DELETE USER MODAL -->
+    <div id="del-user-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete User</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>Are you sure you want to delete the selected User?</span>
+                    <!-- BEGIN DELETE USER FORM -->
+                    <form id="del-user-form" role="form" class="form">
+                        <input type="hidden" name="user_id" id="user_id" value="0" />
+                    </form>
+                    <!-- END DELETE USER FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary del-user-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE USER MODAL -->
+
+ <!-- END ADMINISTRATION CONTENT -->
+{% endblock %}

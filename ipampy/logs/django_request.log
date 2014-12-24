@@ -1,0 +1,318 @@
+[23/Dec/2014 23:57:57] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 01:03:18] WARNING [django.request:143] Not Found: /http://www.ly.com/
+[24/Dec/2014 01:21:04] WARNING [django.request:143] Not Found: /cgi-bin/authLogin.cgi
+[24/Dec/2014 01:47:39] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 01:51:39] WARNING [django.request:143] Not Found: /docs/hosts/
+[24/Dec/2014 03:11:29] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:12:14] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:13:51] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:13:55] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:14:04] WARNING [django.request:143] Not Found: /api/api/vrfs/
+[24/Dec/2014 03:15:26] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:15:50] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 12, in networks_view
+    return render(request, 'networks/index.html', {'networkaddressform': NetworkAddressForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 178, in render_to_string
+    return t.render(context_instance)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 148, in render
+    return self._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/loader_tags.py", line 126, in render
+    return compiled_parent._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 458, in render
+    six.reraise(*exc_info)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 444, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'segments' with arguments '()' and keyword arguments '{}' not found. 1 pattern(s) tried: [u'$segments/']
+[24/Dec/2014 03:18:09] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:21:47] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:21:55] WARNING [django.request:143] Not Found: /static/rest_framework_swagger/images/throbber.gif
+[24/Dec/2014 03:38:39] WARNING [django.request:143] Not Found: /http://222.186.30.113/intoIp.aspx
+[24/Dec/2014 03:49:11] ERROR [django.request:231] Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 12, in networks_view
+    return render(request, 'networks/index.html', {'networkaddressform': NetworkAddressForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 178, in render_to_string
+    return t.render(context_instance)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 148, in render
+    return self._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/loader_tags.py", line 126, in render
+    return compiled_parent._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 458, in render
+    six.reraise(*exc_info)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 444, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'segments' with arguments '()' and keyword arguments '{}' not found. 1 pattern(s) tried: [u'$segments/']
+[24/Dec/2014 03:50:34] WARNING [django.request:143] Not Found: /
+[24/Dec/2014 03:50:37] WARNING [django.request:143] Not Found: /
+[24/Dec/2014 03:50:41] WARNING [django.request:143] Not Found: /segments/
+[24/Dec/2014 03:51:14] ERROR [django.request:231] Internal Server Error: /segments/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 12, in networks_view
+    return render(request, 'networks/index.html', {'networkaddressform': NetworkAddressForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 178, in render_to_string
+    return t.render(context_instance)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 148, in render
+    return self._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/loader_tags.py", line 126, in render
+    return compiled_parent._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 458, in render
+    six.reraise(*exc_info)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 444, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'segments' with arguments '()' and keyword arguments '{}' not found. 1 pattern(s) tried: [u'/$segments/']
+[24/Dec/2014 03:51:44] ERROR [django.request:231] Internal Server Error: /segments/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 12, in networks_view
+    return render(request, 'networks/index.html', {'networkaddressform': NetworkAddressForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 178, in render_to_string
+    return t.render(context_instance)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 148, in render
+    return self._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/loader_tags.py", line 126, in render
+    return compiled_parent._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 458, in render
+    six.reraise(*exc_info)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 444, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'segments' with arguments '()' and keyword arguments '{}' not found. 1 pattern(s) tried: [u'/$segments/']
+[24/Dec/2014 03:53:47] ERROR [django.request:231] Internal Server Error: /segments/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 12, in networks_view
+    return render(request, 'networks/index.html', {'networkaddressform': NetworkAddressForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 178, in render_to_string
+    return t.render(context_instance)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 148, in render
+    return self._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/loader_tags.py", line 126, in render
+    return compiled_parent._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 458, in render
+    six.reraise(*exc_info)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 444, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 551, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 468, in _reverse_with_prefix
+    (lookup_view_s, args, kwargs, len(patterns), patterns))
+NoReverseMatch: Reverse for 'segments' with arguments '()' and keyword arguments '{}' not found. 1 pattern(s) tried: [u'/$segments/']
+[24/Dec/2014 03:55:36] WARNING [django.request:143] Not Found: /segments/
+[24/Dec/2014 03:55:38] WARNING [django.request:143] Not Found: /segments/
+[24/Dec/2014 03:55:56] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:08] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:09] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:40] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:42] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:42] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:43] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:43] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:44] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 03:56:49] WARNING [django.request:143] Not Found: /vrfs/
+[24/Dec/2014 04:01:38] WARNING [django.request:143] Not Found: /vrfs/
+[24/Dec/2014 04:01:40] WARNING [django.request:143] Not Found: /
+[24/Dec/2014 04:01:48] WARNING [django.request:143] Not Found: /networks/
+[24/Dec/2014 04:02:16] WARNING [django.request:143] Not Found: /networks/
+[24/Dec/2014 04:02:44] WARNING [django.request:143] Not Found: /networks/
+[24/Dec/2014 04:02:52] WARNING [django.request:143] Not Found: /networks/
+[24/Dec/2014 04:03:00] WARNING [django.request:143] Not Found: /vlans/
+[24/Dec/2014 04:05:18] WARNING [django.request:143] Not Found: /ipam/
+[24/Dec/2014 04:05:21] WARNING [django.request:143] Not Found: /ipam/vlans/
+[24/Dec/2014 04:05:30] WARNING [django.request:143] Not Found: /ipam/vlans/
+[24/Dec/2014 04:05:33] WARNING [django.request:143] Not Found: /ipam/
+[24/Dec/2014 04:05:38] WARNING [django.request:143] Not Found: /ipam/vrfs/
+[24/Dec/2014 04:06:33] ERROR [django.request:231] Internal Server Error: /ipam/vrfs/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 26, in vrfs_view
+    return render(request, 'vrfs/index.html', {'vrfform': VrfForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name, dirs)
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 144, in get_template
+    template, origin = find_template(template_name, dirs)
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 136, in find_template
+    raise TemplateDoesNotExist(name)
+TemplateDoesNotExist: vrfs/index.html
+[24/Dec/2014 04:06:38] ERROR [django.request:231] Internal Server Error: /ipam/vlans/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 22, in vlans_view
+    return render(request, 'vlans/index.html', {'vlanform': VlanForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name, dirs)
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 144, in get_template
+    template, origin = find_template(template_name, dirs)
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 136, in find_template
+    raise TemplateDoesNotExist(name)
+TemplateDoesNotExist: vlans/index.html
+[24/Dec/2014 04:07:28] ERROR [django.request:231] Internal Server Error: /ipam/vlans/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 22, in vlans_view
+    return render(request, 'ipampy/index.html', {'vlanform': VlanForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name, dirs)
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 144, in get_template
+    template, origin = find_template(template_name, dirs)
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 136, in find_template
+    raise TemplateDoesNotExist(name)
+TemplateDoesNotExist: ipampy/index.html
+[24/Dec/2014 04:08:31] ERROR [django.request:231] Internal Server Error: /ipam/vlans/
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/django/core/handlers/base.py", line 111, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python2.7/site-packages/django/contrib/auth/decorators.py", line 22, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/root/ipampy/ipampy/apps/ipam/views.py", line 22, in vlans_view
+    return render(request, 'ipam/index.html', {'vlanform': VlanForm()})
+  File "/usr/lib/python2.7/site-packages/django/shortcuts.py", line 48, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/usr/lib/python2.7/site-packages/django/template/loader.py", line 178, in render_to_string
+    return t.render(context_instance)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 148, in render
+    return self._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/loader_tags.py", line 126, in render
+    return compiled_parent._render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 142, in _render
+    return self.nodelist.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/base.py", line 844, in render
+    bit = self.render_node(node, context)
+  File "/usr/lib/python2.7/site-packages/django/template/debug.py", line 80, in render_node
+    return node.render(context)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 458, in render
+    six.reraise(*exc_info)
+  File "/usr/lib/python2.7/site-packages/django/template/defaulttags.py", line 444, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=context.current_app)
+  File "/usr/lib/python2.7/site-packages/django/core/urlresolvers.py", line 547, in reverse
+    key)
+NoReverseMatch: u'networks' is not a registered namespace
+[24/Dec/2014 04:10:19] WARNING [django.request:143] Not Found: /
+[24/Dec/2014 04:10:21] WARNING [django.request:143] Not Found: /
+[24/Dec/2014 04:11:14] WARNING [django.request:143] Not Found: /
+[24/Dec/2014 04:11:20] WARNING [django.request:143] Not Found: /ipam/
+[24/Dec/2014 04:12:55] WARNING [django.request:143] Not Found: /ipam/

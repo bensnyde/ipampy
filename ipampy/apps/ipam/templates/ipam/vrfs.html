@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load common_tags %}
+
+{% block sitetitle %}| Vrfs{% endblock %}
+{% block heading %}Vrfs{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Vrfs</li>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static '/assets/plugins/data-tables/DT_bootstrap.css' %}" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/plugins/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static '/assets/vrfs/vrfs.js' %}"></script>
+
+{% endblock %}
+
+{% block jquery_document_ready %}
+    getVrfs();
+
+    $(document)
+        .on('click', 'a.delete-vrf-form-submit', function (e) {
+            e.preventDefault();
+            deleteVrf();
+        })
+        .on('click', 'a.set-vrf-form-submit', function (e) {
+            e.preventDefault();
+            setVrf();
+        })
+        .on('click', 'a.refresh-vrfs', function (e) {
+            e.preventDefault();
+            getVrfs();
+        })
+        .on('click', 'a.show-set-vrf-modal', function (e) {
+            e.preventDefault();
+            resetForm("set-vrf");
+        })
+        .on('click', 'a.del-vrf', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("del-vrf");
+                $("#del-vrf-form #vrf_id").val($(this).closest('tr').data('id'))
+            }
+        })
+        .on('click', 'a.edit-vrf', function (e) {
+            e.preventDefault();
+            if($(this).closest('tr').data('id')) {
+                resetForm("set-vrf");
+                getVrf($(this).closest('tr').data('id'));
+            }
+        });
+{% endblock %}
+
+{% block page_header %}
+    <!-- BEGIN VRF HEADER -->
+    <div class="row" id="content-header">
+        <div class="col-md-6"><h3>VRFs</h3></div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group">
+                <a href="#" role="button" class="refresh-vrfs" alt="Refresh VRFs"><i class="fa fa-refresh"></i></a>
+                <a href="#" role="button" class="show-set-vrf-modal" alt="Create VRF"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- END VRF HEADER -->
+{% endblock %}
+
+{% block content %}
+ <!-- BEGIN VRF CONTENT -->
+
+    <!-- BEGIN VRF TABLE -->
+    <table id="vrfs-table" class="table table-hover">
+        <thead class="row">
+            <tr>
+                <th class="col-md-2">Distinguisher</th>
+                <th class="col-md-4">Name</th>
+                <th class="col-md-4">Description</th>
+                <th class="col-md-2">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody id="vrfs-table-tbody"></tbody>
+    </table>
+    <!-- END VRF TABLE -->
+
+    <!-- BEGIN DELETE VRF MODAL -->
+    <div id="del-vrf-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Delete VRF</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <span>Are you sure you want to delete the selected VRF?</span>
+                    <!-- BEGIN DELETE VRF FORM -->
+                    <form id='del-vrf-form' role="form" class="form">
+                        <input type='hidden' name='vrf_id' id="vrf_id" value="0" />
+                    </form>
+                    <!-- END DELETE VRF FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary delete-vrf-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END DELETE VRF MODAL -->
+
+    <!-- BEGIN SET VRF MODAL -->
+    <div id="set-vrf-modal" class="modal fade in" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- BEGIN MODAL HEADER -->
+                <div class="modal-header">
+                    <h3>Set VRF</h3>
+                </div>
+                <!-- END MODAL HEADER -->
+                <!-- BEGIN MODAL BODY -->
+                <div class="modal-body">
+                    <div class="modal-alert"></div>
+                    <!-- BEGIN SET VRF FORM -->
+                    <form id="set-vrf-form" class="form form-vertical" role="form">
+                        <input type="hidden" name="vrf_id" id="vrf_id" value="0" />
+                        <!-- BEGIN SET VRF FORM TABLE -->
+                        <table class="table table-hover" id="set-vrf-form-table">
+                            {% for field in vrfform %}
+                                <tr class="form-group">
+                                    <td><label class="control-label">{{ field.label_tag }}</label></td>
+                                    <td>
+                                        <div class="controls">
+                                            {{ field|addcss:"form-control" }}
+                                            <span id="{{ field.html_name }}-help" class="help-inline"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <!-- END SET VRF FORM TABLE -->
+                    </form>
+                    <!-- END SET VRF FORM -->
+                </div>
+                <!-- END MODAL BODY -->
+                <!-- BEGIN MODAL FOOTER -->
+                <div class="modal-footer">
+                    <a role="button" class="btn btn-default" data-dismiss="modal">Close</a>
+                    <a role="button" class="btn btn-primary set-vrf-form-submit">Ok</a>
+                </div>
+                <!-- END MODAL FOOTER -->
+            </div>
+        </div>
+    </div>
+    <!-- END SET VRF MODAL -->
+
+ <!-- END VRF CONTENT -->
+{% endblock %}
