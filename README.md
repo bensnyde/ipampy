@@ -16,10 +16,16 @@ _IP Management based on Python's Django Web Framework_
     # git clone https://github.com/bensnyde/ipampy.git
     ```
 
-3. Install dependencies
+3. Change Directory to ./ipampy
 
     ```
-    # pip install -r ipampy/requirements.txt
+    # cd ./ipampy
+    ```
+
+4. Install dependencies
+
+    ```
+    # pip install -r requirements.txt
     ```
 
 #### Configuration
@@ -35,25 +41,28 @@ _IP Management based on Python's Django Web Framework_
 	# cp ipampy/settings/settings_secret_key.py-sample ipampy/settings/settings_secret_key.py
 	```
 
-3. Populate the database
+3. _Optional_ set DEBUG = False in ipampy/settings.py
+
+4. Populate the database
 
     ```
     # python ipampy/manage.py migrate
     ```
 
+5. Setup Webserver
+
+    * Production
+
+        _https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/_
+
+    * Development
+
+        ```
+        # python ipampy/manage.py runserver
+        ```
+
 #### Usage
-1. Configure webserver
-	* Production
-
-	    _https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/_
-
-	* Development
-
-		```
-		# python ipampy/manage.py runserver
-		```
-
-2. Open website in browser
+1. Open website in browser
 	* Default Username: admin
 	* Default Password: ipampy
 

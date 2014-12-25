@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.shortcuts import render
-from .forms import GroupForm, UserChangeForm
+from .forms import GroupForm
 
 
 @login_required
