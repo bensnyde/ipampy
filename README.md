@@ -3,6 +3,18 @@ IPAMpy
 
 _IP Management based on Python's Django Web Framework_
 
+#### Features
+* IPv4/IPv6 inventory management
+* Create/Modify/Delete Network Segments, Networks, Hosts, Vlans, Vrfs 
+* Resize, split or truncate Networks
+
+#### Development
+* Complete RESTful API
+* Object filters, searching and changelogs
+* User and Group permissions
+* Token or Password authentication
+* Modular, extendable, and very developer-friendly
+
 #### Installation
 1. Change Directory to Webspace
 
