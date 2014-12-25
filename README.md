@@ -1,4 +1,4 @@
-ipampy
+IPAMpy
 ======
 
 _IP Management based on Python's Django Web Framework_
