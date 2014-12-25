@@ -58,4 +58,4 @@ _IP Management based on Python's Django Web Framework_
 	* Default Password: ipampy
 
 
-**IPAMPY uses a complete RESTful API. API documentation at API_DOCS.MD**
+**IPAMPY uses a complete RESTful API. API documentation at API_DOCS.md**
