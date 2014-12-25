@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'simple_history',
-    'rest_framework_swagger'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -67,70 +66,4 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.DjangoFilterBackend',
     ),
-}
-
-SWAGGER_SETTINGS = {
-    'exclude_namespaces': [],
-    'api_version': '0.1',
-    'api_path': '/',
-    'enabled_methods': [
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete'
-    ],
-    'api_key': '',
-    'is_authenticated': False,
-    'is_superuser': False,
-    'permission_denied_handler': None,
-    'info': {
-        'contact': 'introspectr3@gmail.com',
-        'description': 'RESTful IP Management with Python\'s Django.',
-        'license': 'Apache 2.0',
-        'licenseUrl': 'http://www.apache.org/licenses/LICENSE-2.0.html',
-        'title': 'IPAMpy',
-    },
-    'doc_expansion': 'none',
-}
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': 'logs/errors.log',
-            'formatter': 'verbose'
-        },
-        'request_handler': {
-                'level':'DEBUG',
-                'class':'logging.handlers.RotatingFileHandler',
-                'filename': 'logs/django_request.log',
-                'maxBytes': 1024*1024*5, # 5 MB
-                'backupCount': 5,
-                'formatter':'verbose',
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-        },
-        'django.request': {
-            'handlers': ['request_handler'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
-    }
 }
