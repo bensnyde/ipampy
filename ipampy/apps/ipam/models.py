@@ -76,7 +76,7 @@ class NetworkAddress(models.Model):
     changed_by = models.ForeignKey(User, null=True, blank=True)
 
     class Meta:
-        unique_together = ['address', 'cidr']
+        unique_together = ['segment', 'address', 'cidr']
 
     def save(self, *args, **kwargs):
         if self.parent:
